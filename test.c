@@ -1,17 +1,30 @@
 #include <stdio.h>
-#include <math.h>
 int main(int argc, char **argv)
 {
-	double f = 0,i,last=2;
-	for(i=0;i<100;i++)
+	FILE *fp;
+	fp = fopen("input.dat","r");
+	int d;
+	int i,j;
+	char array[6][3];
+	for(i=1;i<=2;i++)
 	{
-		f+=pow(2,-i);
-		printf("%lf\n",f);
+		for(j=0;j<3;j++)
+		{
+			fscanf(fp,"%s",array[i*j]);
+		}
+		printf("\n");
 	}
-	if(f==last)
+	fclose(fp);
+	fp = fopen("input.dat","w");
+	for(i=1;i<=2;i++)
 	{
-		printf("fail");
+		for(j=1;j<=3;j++)
+		{
+			fprintf(fp,"%s",array[i*j]);
+			printf("%s ",array[i*j]);
+		}
 	}
+	fclose(fp);
 	return 0;
 }
 
