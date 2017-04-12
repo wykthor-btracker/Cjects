@@ -4,11 +4,11 @@ int main(int argc, char **argv)
 {
 	int i, a;
 	char inp[100];
-	a = 0;
 	while(fgets(inp,100,stdin)!= NULL)
 	{
-		while(inp[i]!='\0')
+		for(i=0;i<100;i++)
 		{
+			if(inp[i]=='\0') break;
 			switch(inp[i])
 			{
 				case '0':
@@ -29,7 +29,6 @@ int main(int argc, char **argv)
 			if(!a) inp[i]-=32;
 			a++;
 			printf("%c",inp[i]);
-			i++;
 		}
 		i = 0;
 	}
