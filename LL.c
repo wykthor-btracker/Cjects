@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct list list;
+typedef struct list list; 
 typedef struct list *node;
+
 struct list
 {
 	int cont;
@@ -40,7 +41,12 @@ node initList(int size)
 	}
 	return first;
 }
-
+void iterAddr(node cell)
+{
+	printf("%p ",cell);
+	if(cell->next == NULL) printf("\n");
+	else iterAddr(cell->next);
+}
 void iter(node cell)
 {
 	printf("%d ",cell->cont);	
@@ -90,7 +96,11 @@ node search(int sear,node cell)
 		free(null);
 		return(cell);
 	}	
-	else if(cell->next != NULL) search(sear,cell->next);
+	else if(cell->next != NULL) 
+	{
+		free(null);
+		search(sear,cell->next);
+	}
 	else return null;
 }
 
@@ -113,8 +123,10 @@ void removeCell(node cell)
 void close(node cell)
 {
 	node next = cell->next;
+	cell->next = NULL;
+	cell->prev = NULL;
 	free(cell);
-	if(cell->next != NULL) close(next);
+	if(next != NULL) close(next);
 }
 
 void searchAndInsert(int sea,int ins,node cell)
@@ -181,6 +193,7 @@ node sub(int start, int end, node cell)
 		return(newList);
 	}
 }
+
 node first(node cell)
 {
 	if(cell->prev == NULL) return cell;
@@ -192,6 +205,7 @@ int main(int argc, char **argv)
 	node firstCell;
 	firstCell = initList(10);
 	iter(firstCell);
+	iterAddr(firstCell);
 	close(firstCell);
 	return 0;
 }
