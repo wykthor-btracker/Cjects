@@ -10,6 +10,11 @@ struct list
 	node prev;
 };
 
+node firstNode(node cell)
+{
+	if(cell->prev == NULL) return cell;
+	else firstNode(cell->prev);
+}
 void new(int x,node last)
 {
 	node cell;
@@ -67,6 +72,9 @@ void preInsert(int val,node cell)
 	{ 
 		cell->prev->next = new;
 		new->cont = val;
+		new->prev = cell->prev;
+		new->next = cell;
+		cell->prev = new;
 	}
 	else
 	{
@@ -83,25 +91,20 @@ void postInsert(int val,node cell)
 	new->next = cell->next;
 	new->cont = val;
 	new->prev = cell;
+	new->next->prev = new;
 	cell->next = new;
 }
 node search(int sear,node cell)
 {
-	node null;
-	null = malloc(sizeof(list));
-	null->prev = NULL;
-	null->next = NULL;
 	if(cell->cont == sear)
 	{ 
-		free(null);
 		return(cell);
 	}	
 	else if(cell->next != NULL) 
 	{
-		free(null);
 		search(sear,cell->next);
 	}
-	else return null;
+	else return NULL;
 }
 
 void removeCell(node cell)
@@ -115,6 +118,7 @@ void removeCell(node cell)
 	}
 	else
 	{ 
+		cell->next->prev = cell->prev;
 		cell->prev->next = cell->next;
 		free(cell);
 	}
@@ -147,10 +151,10 @@ void searchAndRemove(int sea,node cell)
 
 int valid(node cell)
 {
-	if(cell->next != NULL || cell->prev != NULL) return 1;
+	if(cell != NULL) return 1;
 	else return 0;
 }
-void swap(int val1, int val2,node cell)
+void swapVal(int val1, int val2,node cell)
 {
 	node first,second;
 	int middle;
@@ -164,7 +168,13 @@ void swap(int val1, int val2,node cell)
 	}
 	else printf("Operation impossible.\n");
 }
-
+void swapCell(node first,node second)
+{
+	int middle;
+	middle = first->cont;
+	first->cont = second->cont;
+	second->cont = middle;
+}
 node last(node cell)
 {
 	if(cell->next == NULL) return cell;
@@ -193,19 +203,30 @@ node sub(int start, int end, node cell)
 		return(newList);
 	}
 }
-
-node first(node cell)
+void bubble(node cell,int swapp,int order)
 {
-	if(cell->prev == NULL) return cell;
-	else first(cell->prev);
+	//order 0 for ascending, 1 for descending.
+	if(cell->next == NULL && !swapp) return;
+	else if(swapp) bubble(firstNode(cell),0,order);
+	else if(order && cell->cont < cell->next->cont)
+	{
+		swapCell(cell,cell->next);
+		if(!swapp) swapp++;
+		bubble(cell->next,swapp,order);
+	}
+	else if(!order && cell->cont > cell->next->cont)
+	{
+		swapCell(cell,cell->next);
+		if(!swapp)swapp++;
+		bubble(cell->next,swapp,order);
+	}
+	else bubble(cell->next,swapp,order);
 }
-
 int main(int argc, char **argv)
 {
 	node firstCell;
 	firstCell = initList(10);
 	iter(firstCell);
-	iterAddr(firstCell);
 	close(firstCell);
 	return 0;
 }
