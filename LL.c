@@ -11,8 +11,11 @@ struct list
 	node prev;
 	int ordered;
 };
+//function prototypes.
 int binaryRec(int,int, int,node);
 node last(node);
+//end  of function prototypes.
+
 node firstNode(node cell)
 {
 	if(cell->prev == NULL) return cell;
@@ -29,23 +32,27 @@ void new(int x,node last)
 	cell->prev = last;
 }
 
-node init()
+node init(int cont)
 {
 	node new;
 	new = malloc(sizeof(list));
-	new->cont = 0;
+	new->cont = cont;
 	new->prev = NULL;
 	return new;
 }
+
 node initList(int size)
 {
 	node first,cell;
-	first = init();
+	int val;
+	scanf("%d", &val);
+	first = init(val);
 	cell = first;
 	int i;
 	for(i=1;i<size;i++)
 	{
-		new(i,cell);
+		scanf("%d",&val);
+		new(val,cell);
 		cell = cell->next;
 	}
 	return first;
@@ -120,6 +127,8 @@ int binarySearch(int val,int start,int end, node cell)
 	}
 	else return -1;
 }
+//Binary search implemented recursively.
+//Probably the way of traversing the list is inneficient, as i give a number of steps and it moves through the list, node by node.
 int binaryRec(int val,int start, int end,node cell)
 {
 	if(start==end-1) return end;
@@ -128,7 +137,7 @@ int binaryRec(int val,int start, int end,node cell)
 		int middle = ((start+end)/2);
 		DEBUG printf("%d+%d/2 = %d\n",start,end,middle);
 		DEBUG printf("arguments val = %d sta = %d mid = %d end = %d before ifs on binaryRec\n",val, start, middle, end);	
-		DEBUG scanf("%*d");	
+		DEBUG scanf("%*d");	//Cool little piece of code, use for halting processing when you get a infinite loop, to check your vars.
 		if(((cell = move(middle,cell,1))->cont)<val) return(binaryRec(val,middle,end,cell));
 		else
 		{
@@ -224,9 +233,11 @@ void swapVal(int val1, int val2,node cell)
 		middle = first->cont;
 		first->cont = second->cont;
 		second->cont = middle;
+		cell->ordered = 0;
 	}
 	else printf("Operation impossible.\n");
 }
+
 void swapCell(node first,node second) //To be used when you have the pointers to the spefici cells.
 {
 	int middle;
@@ -234,6 +245,7 @@ void swapCell(node first,node second) //To be used when you have the pointers to
 	first->cont = second->cont;
 	second->cont = middle;
 }
+
 node last(node cell)
 {
 	if(cell->next == NULL) return cell;
@@ -243,7 +255,7 @@ node last(node cell)
 node sub(int start, int end, node cell)
 {
 	node firstCell,lastCell,newList;
-	newList = init();
+	newList = init(0);
 	firstCell = search(start,cell);
 	lastCell = search(end,cell);
 	if(valid(firstCell) && valid(lastCell))
@@ -285,8 +297,61 @@ void bubble(node cell,int swapp,int order)
 	}
 	else bubble(cell->next,swapp,order);
 }
-void joinList(node list1, node list2)
+
+node separate(node cell,node lastCell)
 {
+	node start,end,pivot,handle;
+	start = cell->next;
+	handle = start;
+	pivot = cell;
+	end = start;
+	DEBUG printf("%d is the pivot, next to %d\n",pivot->cont,pivot->next->cont);
+	while(handle != lastCell->next)
+	{
+		//DEBUG printf("Outer part of while loop on separate() info: handle addr:%p, lastCell->next addr:%p\n",handle,lastCell->next);
+		if(handle->cont < pivot->cont)
+		{ 
+			//DEBUG printf("Inner part of while loop on if statement on separate()\n");
+			swapCell(handle,end);
+			end = end->next;
+			start = end->prev;
+		}
+		handle = handle->next;
+	}
+	DEBUG printf("%d %d\n",pivot->cont,start->cont);
+	DEBUG printf("%p %p\n",pivot,start);
+	if(pivot->next != start) swapCell(pivot,start);
+	DEBUG printf("%d %d\n",pivot->cont,start->cont);
+	DEBUG printf("%p %p\n",pivot,start);	
+	DEBUG printf("returning %p end is %p,pivot is at %p lastCell is %p\n",start,end,pivot,lastCell);
+	return(start);
+}
+void quickSort(node start,node end)
+{
+	node pivot = separate(start,end);
+	DEBUG scanf("%*s");	
+	DEBUG printf("got start = %p end = %p end->prev = %p\n",start,end,end->prev); 
+	if(start->next == end)
+	{
+		if(start->cont > end->cont) swapCell(start,end);
+		DEBUG printf("%d %d values on section end.",start->cont,end->cont);
+		DEBUG printf("Ended a section.\n");
+		return;
+	}
+	else
+	{
+		DEBUG printf("sorting from start:%p to pivot:%p\n",start,pivot);
+		quickSort(start,pivot);
+		DEBUG iter(firstNode(start));		
+		DEBUG printf("Done left half.\n");
+		DEBUG printf("sorting from pivot:%p to end:%p\n",pivot,end);		
+		quickSort(pivot,end);
+		DEBUG iter(firstNode(start));		
+		DEBUG printf("Done right half.\n");
+	}
+}	
+void joinList(node list1, node list2) 	//This function uses functions that traverse the node list recursively.
+{										//That way, i get the end of a list and the start of another, and update the respective nodes.
 	list1 = last(list1);
 	list2 = firstNode(list2);
 	list1->next = list2;
@@ -296,10 +361,11 @@ int main(int argc, char **argv)
 {
 	node firstCell;
 	int order = 0;
-	firstCell = initList(10);
-	bubble(firstCell,0,order);
+	firstCell = initList(100);
 	iter(firstCell);
-	close(firstCell);
+	quickSort(firstCell,last(firstCell));		//3rd argument for bubble is divided on 1 and 0, 0 for ascending order and 1 for descending.
+	iter(firstCell);							//Ideally i will make all flags used for deciding between ascending and descending follow the same
+	close(firstCell);							//Logic.
 	return 0;
 }
 
