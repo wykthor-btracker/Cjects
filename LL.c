@@ -361,7 +361,7 @@ int main(int argc, char **argv)
 {
 	node firstCell;
 	int order = 0;
-	firstCell = initList(100);
+	firstCell = initList(14999);
 	iter(firstCell);
 	quickSort(firstCell,last(firstCell));		//3rd argument for bubble is divided on 1 and 0, 0 for ascending order and 1 for descending.
 	iter(firstCell);							//Ideally i will make all flags used for deciding between ascending and descending follow the same
