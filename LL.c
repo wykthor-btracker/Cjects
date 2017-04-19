@@ -1,16 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "LL.h"
 #define DEBUG if(0)
-typedef struct list list; 
-typedef struct list *node;
-
-struct list
-{
-	int cont;
-	node next;
-	node prev;
-	int ordered;
-};
 //function prototypes.
 int binaryRec(int,int, int,node);
 node last(node);
@@ -43,18 +34,21 @@ node init(int cont)
 
 node initList(int size)
 {
+	FILE *fr;
+	fr = fopen("input.dat","r");
 	node first,cell;
 	int val;
-	scanf("%d", &val);
+	fscanf(fr,"%d", &val);
 	first = init(val);
 	cell = first;
 	int i;
 	for(i=1;i<size;i++)
 	{
-		scanf("%d",&val);
+		fscanf(fr,"%d",&val);
 		new(val,cell);
 		cell = cell->next;
 	}
+	fclose(fr);
 	return first;
 }
 void iterAddr(node cell)
@@ -306,45 +300,55 @@ node separate(node cell,node lastCell)
 	pivot = cell;
 	end = start;
 	DEBUG printf("%d is the pivot, next to %d\n",pivot->cont,pivot->next->cont);
+	DEBUG iter(firstNode(cell));
+	DEBUG printf("No segfault yet.1\n");
 	while(handle != lastCell->next)
 	{
+		DEBUG printf("No segfault yet.2\n");	
 		//DEBUG printf("Outer part of while loop on separate() info: handle addr:%p, lastCell->next addr:%p\n",handle,lastCell->next);
 		if(handle->cont < pivot->cont)
 		{ 
+			DEBUG printf("No segfault yet.3\n");	
 			//DEBUG printf("Inner part of while loop on if statement on separate()\n");
 			swapCell(handle,end);
-			end = end->next;
-			start = end->prev;
+			if(end->next != NULL)
+			{
+				end = end->next;
+				start = end->prev;
+			}
+			DEBUG printf("No segfault yet.4\n");		
 		}
+		DEBUG printf("No segfault yet.5\n");	
 		handle = handle->next;
 	}
 	DEBUG printf("%d %d\n",pivot->cont,start->cont);
-	DEBUG printf("%p %p\n",pivot,start);
-	if(pivot->next != start) swapCell(pivot,start);
-	DEBUG printf("%d %d\n",pivot->cont,start->cont);
-	DEBUG printf("%p %p\n",pivot,start);	
-	DEBUG printf("returning %p end is %p,pivot is at %p lastCell is %p\n",start,end,pivot,lastCell);
+	//DEBUG printf("%p %p\n",pivot,start);
+	if(pivot->next != start || pivot->cont > start->cont)
+	{ 
+		swapCell(pivot,start);
+		DEBUG printf("post-swap: pivot %d start %d\n",pivot->cont,start->cont);
+	}	
+	//DEBUG printf("%p %p\n",pivot,start);	
+	//DEBUG printf("returning %p end is %p,pivot is at %p lastCell is %p\n",start,end,pivot,lastCell);
 	return(start);
 }
-void quickSort(node start,node end)
+void quickSort(node start,node end) //Use o arquivo .py pra gerar uma lista de numeros
 {
 	node pivot = separate(start,end);
 	DEBUG scanf("%*s");	
-	DEBUG printf("got start = %p end = %p end->prev = %p\n",start,end,end->prev); 
+	//DEBUG printf("got start = %p end = %p end->prev = %p\n",start,end,end->prev); 
 	if(start->next == end)
 	{
-		if(start->cont > end->cont) swapCell(start,end);
-		DEBUG printf("%d %d values on section end.",start->cont,end->cont);
 		DEBUG printf("Ended a section.\n");
 		return;
 	}
 	else
 	{
-		DEBUG printf("sorting from start:%p to pivot:%p\n",start,pivot);
+		//DEBUG printf("sorting from start:%p to pivot:%p\n",start,pivot);
 		quickSort(start,pivot);
 		DEBUG iter(firstNode(start));		
 		DEBUG printf("Done left half.\n");
-		DEBUG printf("sorting from pivot:%p to end:%p\n",pivot,end);		
+		DEBUG printf("sorting from pivot:%d to end:%d\n",pivot->cont,end->cont);		
 		quickSort(pivot,end);
 		DEBUG iter(firstNode(start));		
 		DEBUG printf("Done right half.\n");
@@ -356,16 +360,5 @@ void joinList(node list1, node list2) 	//This function uses functions that trave
 	list2 = firstNode(list2);
 	list1->next = list2;
 	list2->prev = list1;
-}
-int main(int argc, char **argv)
-{
-	node firstCell;
-	int order = 0;
-	firstCell = initList(14999);
-	iter(firstCell);
-	quickSort(firstCell,last(firstCell));		//3rd argument for bubble is divided on 1 and 0, 0 for ascending order and 1 for descending.
-	iter(firstCell);							//Ideally i will make all flags used for deciding between ascending and descending follow the same
-	close(firstCell);							//Logic.
-	return 0;
 }
 

@@ -10,14 +10,19 @@ from random import randint
 #classes
 
 #functions
-
+def addNumbers(size):
+	with open("input.dat","a") as f:
+		x = []
+		for i in range(size):
+			x.append(randint(1,i+1))
+		for i in range(len(x)):
+			x[i] = str(x[i])
+		b = " ".join(x)
+		b = b+"\n"
+		f.write(b)
 #main
 def main():
-	with open("input.dat","w") as f:
-		x = ''
-		for i in range(int(argv[1])):
-			x = x+' '+str(randint(1,int(argv[1])))
-		f.write(x)
+	addNumbers(int(argv[1]))
 	return 0
 
 if __name__ == '__main__':
