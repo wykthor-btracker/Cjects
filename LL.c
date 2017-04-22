@@ -172,6 +172,7 @@ void removeCell(node cell)
 		cell->cont = cell->next->cont;
 		node copy = cell->next->next;
 		free(cell->next);
+		cell->next = NULL;
 		cell->next = copy;
 	}
 	else
@@ -179,6 +180,7 @@ void removeCell(node cell)
 		cell->next->prev = cell->prev;
 		cell->prev->next = cell->next;
 		free(cell);
+		cell = NULL;
 	}
 }
 
