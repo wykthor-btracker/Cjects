@@ -1,16 +1,21 @@
 #include <stdio.h>
-double walk(double base, int exp)
+#include <stdlib.h>
+void iter(int *list,int size)
 {
-	if(exp == 1) return base;
-	else base*=walk(base,exp-1);
-	printf("%.0lf",base);
+	if(size == 0) return;
+	else
+	{
+		printf("%d\n",*list);
+		iter(list+1,size-1); //list++ != list+1
+	}
 }
 int main()
 {
-	double base;
-	int exp;
-	scanf("%lf %d",&base,&exp);
-	walk(base,exp);
+	int size = 10;
+	int *list = malloc(sizeof(int)*size);
+	int i;
+	for(i=0;i<size;i++) list[i] = i+2;
+	iter(list,size);
 	return 0;
 }
 

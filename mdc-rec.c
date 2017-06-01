@@ -1,13 +1,8 @@
 #include <stdio.h>
 int mdc(int a,int b)
 {
-	int c;
 	if(b == 0) return a;
-	else
-	{
-		c = a%b;
-		mdc(b,c);
-	}
+	else mdc(b,a%b);
 }
 int main(int argc, char **argv)
 {
