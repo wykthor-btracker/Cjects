@@ -36,8 +36,7 @@ adj_list *create_adj_list(int);
 //end of prototypes
 int is_empty(queue *queue)
 {
-	if(queue->current_size == 0) return 1;
-	else return 0;
+	return queue->current_size;
 }
 void enqueue(queue *queue, int item)
 {
