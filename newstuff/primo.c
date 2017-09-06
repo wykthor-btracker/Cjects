@@ -3,9 +3,9 @@
 int main(void) 
 {
   int primo = 0,achou = 0,u,i,size,primos;
-	scanf("%d",&size);
+	//scanf("%d",&size);
 	achou = 0;
-	for(i=2;primos<size;i++)
+	for(i=2;/*primos<size*/;i++)
 	{
 	primo = i;
 	for(u=2;u<=sqrt(primo);u++)

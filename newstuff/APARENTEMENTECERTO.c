@@ -138,5 +138,6 @@ int main()
 	add_edge(undirected_graph, 2, 4);
 	add_edge(undirected_graph, 3, 4);
 	add_edge(undirected_graph, 4, 5);
+	bfs(undirected_graph,1);
 	return 0;
 }
